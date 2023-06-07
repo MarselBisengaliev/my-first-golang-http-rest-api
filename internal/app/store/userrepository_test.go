@@ -8,12 +8,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestUserRepository(t *testing.T) {
+func TestUserRepository_Create(t *testing.T) {
 	s, teardown := store.TestStore(t, databaseUrl)
 	defer teardown("users")
 
 	u, err := s.User().Create(&model.User{
 		Email: "user@example.org",
+		Password: "password",
 	})
 
 	assert.NoError(t, err)
@@ -28,10 +29,9 @@ func TestUserRepository_FindByEmail(t *testing.T) {
 	_, err := s.User().FindByEmail(email)
 	assert.Error(t, err)
 
-	s.User().Create(&model.User{
-		Email: "user@example.org",
-	})
-	u, err := s.User().FindByEmail(email)
+	u := model.TestUser(t)
+	s.User().Create(u)
+	u, err = s.User().FindByEmail(email)
 	assert.NoError(t, err)
 	assert.NotNil(t, u)
 }
