@@ -44,3 +44,20 @@ func (r *UserRepository) FindByEmail(email string) (*model.User, error) {
 	return u, nil
 }
 
+func (r *UserRepository) Find(id int) (*model.User, error) {
+	u := &model.User{}
+	if err := r.store.db.QueryRow(
+		"SELECT id, email, encrypted_password FROM users where id = $1", 
+		id,
+	).Scan(&u.ID, &u.Email, &u.EncryptedPassword); err != nil {
+		fmt.Println("Error is here")
+		if err == sql.ErrNoRows {
+			return nil, store.ErrRecordNotFound
+		}
+
+		return nil, err
+	}
+
+	return u, nil
+}
+
