@@ -2,6 +2,7 @@ package sqlstore
 
 import (
 	"database/sql"
+	"fmt"
 	store "http-rest-api/internal/app"
 	"http-rest-api/internal/app/model"
 )
@@ -32,6 +33,7 @@ func (r *UserRepository) FindByEmail(email string) (*model.User, error) {
 		"SELECT id, email, encrypted_password FROM users where email = $1", 
 		email,
 	).Scan(&u.ID, &u.Email, &u.EncryptedPassword); err != nil {
+		fmt.Println("Error is here")
 		if err == sql.ErrNoRows {
 			return nil, store.ErrRecordNotFound
 		}
